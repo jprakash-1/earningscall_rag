@@ -44,11 +44,14 @@ class Settings(BaseSettings):
     small_mode_limit: int = Field(default=100, alias="SMALL_MODE_LIMIT")
 
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
+    openai_embedding_model: str = Field(default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL")
+    fallback_embedding_dim: int = Field(default=1536, alias="FALLBACK_EMBEDDING_DIM")
 
     pinecone_api_key: str | None = Field(default=None, alias="PINECONE_API_KEY")
     pinecone_index_name: str = Field(default="earningscall-rag", alias="PINECONE_INDEX_NAME")
     pinecone_cloud: str = Field(default="aws", alias="PINECONE_CLOUD")
     pinecone_region: str = Field(default="us-east-1", alias="PINECONE_REGION")
+    pinecone_namespace: str = Field(default="earnings-call-rag", alias="PINECONE_NAMESPACE")
 
     langsmith_api_key: str | None = Field(default=None, alias="LANGSMITH_API_KEY")
     langsmith_project: str = Field(default="earningscall-rag", alias="LANGSMITH_PROJECT")

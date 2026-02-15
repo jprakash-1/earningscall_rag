@@ -24,3 +24,15 @@ This file tracks exact commands run during implementation.
 - `cat > tests/test_chunking.py`
 - `python -m src.data.chunking --mode small --print-samples 3`
 - `pytest -q`
+- `git add .`
+- `git commit -m "feat: add chunking strategies + document builder"`
+
+## Step 3
+- `mkdir -p src/indexing`
+- `cat > src/indexing/embedder.py`
+- `cat > src/indexing/pinecone_client.py`
+- `cat > src/indexing/indexer.py`
+- `cat > src/indexing/cli_index.py`
+- `cat > tests/test_retrieval.py`
+- `python -m src.indexing.cli_index --mode small --limit 200` (failed fast as expected without Pinecone key)
+- `pytest -q`

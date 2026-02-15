@@ -34,3 +34,16 @@ pytest -q
 ```
 
 If chunk counts are non-zero and tests pass, chunking strategies are working.
+
+## Step 3 verification
+
+Run:
+
+```bash
+python -m src.indexing.cli_index --mode small --limit 200
+pytest -q
+```
+
+Expected behavior:
+- If Pinecone env vars are configured, indexing should upsert vectors.
+- If env vars are missing, CLI should fail fast with a clear error message.
