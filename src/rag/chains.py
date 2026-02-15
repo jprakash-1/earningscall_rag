@@ -19,17 +19,18 @@ from src.utils.logging import configure_logging, get_logger
 logger = get_logger(__name__)
 
 
-def _format_context(chunks: list[Any]) -> str:
+def _format_context(chunks: list[dict[str, Any]]) -> str:
     """Build prompt context with source labels for grounded synthesis."""
 
     lines: list[str] = []
     for chunk in chunks:
-        company = chunk.metadata.get("company", "unknown")
-        source = chunk.metadata.get("source", "unknown")
-        section = chunk.metadata.get("section", "transcript")
+        metadata = chunk.get("metadata", {})
+        company = metadata.get("company", "unknown")
+        source = metadata.get("source", "unknown")
+        section = metadata.get("section", "transcript")
         lines.append(
-            f"[{chunk.citation_id}] company={company} source={source} section={section}\n"
-            f"{chunk.text}"
+            f"[{chunk['citation_id']}] company={company} source={source} section={section}\n"
+            f"{chunk['text']}"
         )
 
     return "\n\n".join(lines)
@@ -51,18 +52,8 @@ def _safe_parse_json(raw_text: str) -> dict[str, Any]:
         return {"answer": raw_text, "citation_ids": []}
 
 
-def answer_query(
-    query: str,
-    *,
-    namespace: str,
-    top_k: int = 6,
-    use_mmr: bool = False,
-    filters: dict[str, Any] | None = None,
-) -> AnswerWithCitations:
-    """Run retrieve-then-synthesize with Groq and structured citations."""
-
-    retriever = PineconeRetriever(namespace=namespace, top_k=top_k, use_mmr=use_mmr)
-    chunks = retriever.retrieve(query, filters=filters)
+def synthesize_from_chunks(query: str, chunks: list[dict[str, Any]]) -> AnswerWithCitations:
+    """Synthesize an answer from pre-retrieved chunks using Groq."""
 
     if not chunks:
         return AnswerWithCitations(
@@ -85,21 +76,22 @@ def answer_query(
     requested_ids = parsed.get("citation_ids", []) if isinstance(parsed, dict) else []
     requested_ids = [str(item) for item in requested_ids if isinstance(item, str)]
 
-    by_id = {chunk.citation_id: chunk for chunk in chunks}
+    by_id = {chunk["citation_id"]: chunk for chunk in chunks}
     citations: list[Citation] = []
 
     for citation_id in requested_ids:
         chunk = by_id.get(citation_id)
         if not chunk:
             continue
+        metadata = chunk.get("metadata", {})
         citations.append(
             Citation(
                 citation_id=citation_id,
-                company=str(chunk.metadata.get("company", "unknown")),
-                source=str(chunk.metadata.get("source", "unknown")),
-                section=str(chunk.metadata.get("section", "transcript")),
-                snippet=chunk.text[:280],
-                score=chunk.score,
+                company=str(metadata.get("company", "unknown")),
+                source=str(metadata.get("source", "unknown")),
+                section=str(metadata.get("section", "transcript")),
+                snippet=str(chunk.get("text", ""))[:280],
+                score=float(chunk.get("score", 0.0)),
             )
         )
 
@@ -113,6 +105,30 @@ def answer_query(
         extra={"context": {"query": query, "citations": len(citations), "top_k": top_k}},
     )
     return response
+
+
+def answer_query(
+    query: str,
+    *,
+    namespace: str,
+    top_k: int = 6,
+    use_mmr: bool = False,
+    filters: dict[str, Any] | None = None,
+) -> AnswerWithCitations:
+    """Run retrieve-then-synthesize with Groq and structured citations."""
+
+    retriever = PineconeRetriever(namespace=namespace, top_k=top_k, use_mmr=use_mmr)
+    retrieved = retriever.retrieve(query, filters=filters)
+    chunks = [
+        {
+            "citation_id": item.citation_id,
+            "text": item.text,
+            "score": item.score,
+            "metadata": item.metadata,
+        }
+        for item in retrieved
+    ]
+    return synthesize_from_chunks(query, chunks)
 
 
 def _build_arg_parser() -> argparse.ArgumentParser:

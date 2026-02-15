@@ -60,3 +60,16 @@ pytest -q
 Expected behavior:
 - If Pinecone + Groq env vars are configured, command returns JSON answer with citations.
 - If keys are missing, command fails fast with a clear error message.
+
+## Step 5 verification
+
+Run:
+
+```bash
+python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1
+pytest -q
+```
+
+Expected behavior:
+- Graph output includes route decision (`retrieve`, `clarify`, or `direct`).
+- Tests validate deterministic routing behavior for ambiguous/specific/general queries.

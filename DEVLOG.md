@@ -48,3 +48,11 @@ This file tracks exact commands run during implementation.
 - `cat > src/rag/chains.py`
 - `python -m src.rag.chains --query "What were the risks mentioned?" --mode pinecone` (failed fast as expected without Pinecone key)
 - `pytest -q`
+
+## Step 5
+- `cat > src/graph/state.py`
+- `cat > src/graph/nodes.py`
+- `cat > src/graph/graph.py`
+- `cat > tests/test_graph_routing.py`
+- `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
+- `pytest -q` (fixed routing heuristics and reran until green)
