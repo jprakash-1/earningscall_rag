@@ -74,3 +74,12 @@ This file tracks exact commands run during implementation.
 - `streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502` (required escalated run to bind local port)
 - `pkill -f "streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502"`
 - `pytest -q`
+
+## Step 8
+- `cat > src/eval/build_dataset.py`
+- `cat > src/eval/evaluators.py`
+- `cat > src/eval/run_eval.py`
+- `python -m src.eval.build_dataset --limit 50`
+- `python -m src.eval.run_eval --experiment baseline`
+- `python -m src.eval.run_eval --experiment improved`
+- `pytest -q`

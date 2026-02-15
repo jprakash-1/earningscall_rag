@@ -1,0 +1,14 @@
+[
+  {
+    "inputs": {
+      "question": "What was management's outlook?"
+    },
+    "outputs": {
+      "answer": "Management expected moderate growth next quarter."
+    },
+    "metadata": {
+      "doc_id": "doc_298a81c24e81b347",
+      "source_dataset": "lamini/earnings-calls-qa"
+    }
+  }
+]

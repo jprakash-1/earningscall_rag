@@ -102,3 +102,17 @@ Then in the app:
 1. Ask a question in chat.
 2. Verify source citations appear under `Sources`.
 3. Toggle `DEBUG mode` and verify router decision, retrieval snippets, and latency appear.
+
+## Step 8 verification
+
+Run:
+
+```bash
+python -m src.eval.build_dataset --limit 50
+python -m src.eval.run_eval --experiment baseline
+python -m src.eval.run_eval --experiment improved
+```
+
+Outputs:
+- Dataset preview dump: `reports/eval_dataset_preview.json`
+- Evaluation report: `reports/eval_summary.md`
