@@ -39,7 +39,7 @@ This file tracks exact commands run during implementation.
 - `git add .`
 - `git commit -m "feat: add Pinecone indexing pipeline + CLI"`
 
-## Provider update (Groq-first)
+## Step 4 (Groq-first refactor + RAG chain)
 - `cat > src/indexing/embedder.py` (migrated from OpenAI embeddings defaults to HuggingFace + fallback)
 - `cat > src/utils/llm.py` (Groq LLM factory)
 - `cat > src/rag/retriever.py`
@@ -48,6 +48,8 @@ This file tracks exact commands run during implementation.
 - `cat > src/rag/chains.py`
 - `python -m src.rag.chains --query "What were the risks mentioned?" --mode pinecone` (failed fast as expected without Pinecone key)
 - `pytest -q`
+- `git add .`
+- `git commit -m "feat: implement LangChain RAG chain with citations"`
 
 ## Step 5
 - `cat > src/graph/state.py`
@@ -56,6 +58,8 @@ This file tracks exact commands run during implementation.
 - `cat > tests/test_graph_routing.py`
 - `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
 - `pytest -q` (fixed routing heuristics and reran until green)
+- `git add .`
+- `git commit -m "feat: add LangGraph agentic RAG router + tests"`
 
 ## Step 6
 - `cat > src/utils/tracing.py`
@@ -65,6 +69,8 @@ This file tracks exact commands run during implementation.
 - `apply_patch src/graph/graph.py` (trace setup in CLI)
 - `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
 - `pytest -q`
+- `git add .`
+- `git commit -m "chore: add LangSmith tracing + debug utilities"`
 
 ## Step 7
 - `cat > src/app/streamlit_app.py`
@@ -74,6 +80,8 @@ This file tracks exact commands run during implementation.
 - `streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502` (required escalated run to bind local port)
 - `pkill -f "streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502"`
 - `pytest -q`
+- `git add .`
+- `git commit -m "feat: add Streamlit chat app with filters + sources"`
 
 ## Step 8
 - `cat > src/eval/build_dataset.py`
@@ -82,4 +90,13 @@ This file tracks exact commands run during implementation.
 - `python -m src.eval.build_dataset --limit 50`
 - `python -m src.eval.run_eval --experiment baseline`
 - `python -m src.eval.run_eval --experiment improved`
+- `pytest -q`
+- `git add .`
+- `git commit -m "feat: add LangSmith eval pipeline + experiment comparison"`
+
+## Step 9
+- `cat > README.md` (final quickstart + troubleshooting docs)
+- `cat > .env.example` (restored and updated for Groq/Pinecone/LangSmith)
+- `cat > scripts/dev_small.sh`
+- `bash -n scripts/dev_small.sh`
 - `pytest -q`
