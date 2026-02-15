@@ -9,6 +9,8 @@ dependencies = [
   "pydantic-settings>=2.3.0",
   "python-dotenv>=1.0.1",
   "datasets>=2.20.0",
+  "langchain-core>=0.2.20",
+  "langchain-text-splitters>=0.2.2",
 ]
 
 [project.optional-dependencies]

@@ -23,3 +23,14 @@ pytest -q
 ```
 
 If loader output prints a count and at least one sample record, Step 1 is wired.
+
+## Step 2 verification
+
+Run:
+
+```bash
+python -m src.data.chunking --mode small --print-samples 3
+pytest -q
+```
+
+If chunk counts are non-zero and tests pass, chunking strategies are working.
