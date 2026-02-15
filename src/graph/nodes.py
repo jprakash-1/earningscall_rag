@@ -17,6 +17,7 @@ from src.rag.chains import answer_query, synthesize_from_chunks
 from src.rag.retriever import PineconeRetriever
 from src.utils.llm import get_groq_chat_model
 from src.utils.logging import get_logger
+from src.utils.tracing import traceable
 
 logger = get_logger(__name__)
 
@@ -70,6 +71,7 @@ def heuristic_route(query: str) -> tuple[str, str]:
     return "retrieve", "Query appears specific enough for evidence-grounded retrieval."
 
 
+@traceable(name="router_llm_decision", run_type="llm")
 def _llm_route(query: str) -> tuple[str, str, dict[str, Any]]:
     """Use Groq to classify route and propose optional metadata filters."""
 
@@ -112,6 +114,7 @@ def _llm_route(query: str) -> tuple[str, str, dict[str, Any]]:
     return route, reason, filters
 
 
+@traceable(name="router_node", run_type="chain")
 def router_node(state: GraphState) -> GraphState:
     """Choose routing path for current query."""
 
@@ -167,6 +170,7 @@ def clarify_node(state: GraphState) -> GraphState:
     }
 
 
+@traceable(name="retrieve_node", run_type="retriever")
 def retrieve_node(state: GraphState) -> GraphState:
     """Retrieve chunks from Pinecone based on router decision and filters."""
 
@@ -192,6 +196,7 @@ def retrieve_node(state: GraphState) -> GraphState:
         return {**state, "retrieved_chunks": [], "error": str(exc)}
 
 
+@traceable(name="synthesize_node", run_type="chain")
 def synthesize_node(state: GraphState) -> GraphState:
     """Synthesize final grounded answer from retrieved evidence."""
 
@@ -223,6 +228,7 @@ def synthesize_node(state: GraphState) -> GraphState:
         }
 
 
+@traceable(name="direct_answer_node", run_type="chain")
 def direct_answer_node(state: GraphState) -> GraphState:
     """Provide direct conceptual help without retrieval."""
 

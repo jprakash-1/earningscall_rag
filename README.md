@@ -73,3 +73,19 @@ pytest -q
 Expected behavior:
 - Graph output includes route decision (`retrieve`, `clarify`, or `direct`).
 - Tests validate deterministic routing behavior for ambiguous/specific/general queries.
+
+## Step 6 verification
+
+Run any query command, for example:
+
+```bash
+python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1
+```
+
+Then confirm in LangSmith:
+1. `LANGSMITH_API_KEY` and `LANGSMITH_PROJECT` are set.
+2. `LANGCHAIN_TRACING_V2=true`.
+3. Open your LangSmith project and verify runs include:
+   - `router_node` / `router_llm_decision`
+   - `retriever_query`
+   - `synthesize_from_chunks`

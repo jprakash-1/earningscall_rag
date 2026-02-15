@@ -14,6 +14,7 @@ from typing import Any
 from src.indexing.embedder import get_embedder
 from src.indexing.pinecone_client import get_or_create_index
 from src.utils.logging import get_logger
+from src.utils.tracing import traceable
 
 logger = get_logger(__name__)
 
@@ -94,6 +95,7 @@ class PineconeRetriever:
         probe = self.embedder.embed_query("dimension probe")
         self.index = get_or_create_index(expected_dimension=len(probe))
 
+    @traceable(name="retriever_query", run_type="retriever")
     def retrieve(self, query: str, *, filters: dict[str, Any] | None = None) -> list[RetrievedChunk]:
         """Retrieve chunks for a natural-language question."""
 

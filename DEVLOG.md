@@ -56,3 +56,12 @@ This file tracks exact commands run during implementation.
 - `cat > tests/test_graph_routing.py`
 - `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
 - `pytest -q` (fixed routing heuristics and reran until green)
+
+## Step 6
+- `cat > src/utils/tracing.py`
+- `apply_patch src/graph/nodes.py` (trace decorators)
+- `apply_patch src/rag/retriever.py` (trace decorator)
+- `apply_patch src/rag/chains.py` (trace + setup)
+- `apply_patch src/graph/graph.py` (trace setup in CLI)
+- `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
+- `pytest -q`

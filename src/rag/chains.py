@@ -15,6 +15,7 @@ from src.rag.retriever import PineconeRetriever
 from src.rag.schemas import AnswerWithCitations, Citation
 from src.utils.llm import get_groq_chat_model
 from src.utils.logging import configure_logging, get_logger
+from src.utils.tracing import configure_langsmith_tracing, traceable
 
 logger = get_logger(__name__)
 
@@ -52,6 +53,7 @@ def _safe_parse_json(raw_text: str) -> dict[str, Any]:
         return {"answer": raw_text, "citation_ids": []}
 
 
+@traceable(name="synthesize_from_chunks", run_type="chain")
 def synthesize_from_chunks(query: str, chunks: list[dict[str, Any]]) -> AnswerWithCitations:
     """Synthesize an answer from pre-retrieved chunks using Groq."""
 
@@ -107,6 +109,7 @@ def synthesize_from_chunks(query: str, chunks: list[dict[str, Any]]) -> AnswerWi
     return response
 
 
+@traceable(name="rag_answer_query", run_type="chain")
 def answer_query(
     query: str,
     *,
@@ -145,6 +148,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _build_arg_parser().parse_args()
     configure_logging(debug=bool(args.debug))
+    configure_langsmith_tracing()
 
     result = answer_query(
         args.query,

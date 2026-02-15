@@ -15,6 +15,7 @@ from src.graph.nodes import (
 )
 from src.graph.state import GraphState
 from src.utils.logging import configure_logging, get_logger
+from src.utils.tracing import configure_langsmith_tracing
 
 logger = get_logger(__name__)
 
@@ -89,6 +90,7 @@ def _build_arg_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = _build_arg_parser().parse_args()
     configure_logging(debug=bool(args.debug))
+    configure_langsmith_tracing()
 
     result = run_agentic_query(
         args.query,
