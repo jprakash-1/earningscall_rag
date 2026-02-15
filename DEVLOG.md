@@ -36,3 +36,15 @@ This file tracks exact commands run during implementation.
 - `cat > tests/test_retrieval.py`
 - `python -m src.indexing.cli_index --mode small --limit 200` (failed fast as expected without Pinecone key)
 - `pytest -q`
+- `git add .`
+- `git commit -m "feat: add Pinecone indexing pipeline + CLI"`
+
+## Provider update (Groq-first)
+- `cat > src/indexing/embedder.py` (migrated from OpenAI embeddings defaults to HuggingFace + fallback)
+- `cat > src/utils/llm.py` (Groq LLM factory)
+- `cat > src/rag/retriever.py`
+- `cat > src/rag/prompts.py`
+- `cat > src/rag/schemas.py`
+- `cat > src/rag/chains.py`
+- `python -m src.rag.chains --query "What were the risks mentioned?" --mode pinecone` (failed fast as expected without Pinecone key)
+- `pytest -q`

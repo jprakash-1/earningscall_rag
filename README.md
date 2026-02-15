@@ -47,3 +47,16 @@ pytest -q
 Expected behavior:
 - If Pinecone env vars are configured, indexing should upsert vectors.
 - If env vars are missing, CLI should fail fast with a clear error message.
+
+## Step 4 verification
+
+Run:
+
+```bash
+python -m src.rag.chains --query "What were the risks mentioned?" --mode pinecone
+pytest -q
+```
+
+Expected behavior:
+- If Pinecone + Groq env vars are configured, command returns JSON answer with citations.
+- If keys are missing, command fails fast with a clear error message.

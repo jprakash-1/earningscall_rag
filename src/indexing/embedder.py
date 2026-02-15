@@ -1,11 +1,12 @@
 """Embedding model selection for indexing and retrieval.
 
 Teaching notes:
-- Production path: OpenAI embeddings through LangChain.
-- Local/dev fallback: deterministic hash embeddings (no API cost, no network).
+- Primary path: HuggingFace sentence-transformer embeddings (non-OpenAI).
+- Local/dev fallback: deterministic hash embeddings (no model download/API cost).
 
-The fallback keeps development loops fast while still letting us exercise end-to-
-end indexing logic and tests.
+Why this setup:
+Groq is used for generation/classification in this project, while embeddings are
+handled by a separate provider suitable for vector search.
 """
 
 from __future__ import annotations
@@ -35,8 +36,8 @@ class DeterministicHashEmbeddings:
     """Local deterministic embeddings for offline/small-mode development.
 
     Important:
-    This is not semantically strong like real embedding models. Its purpose is
-    to keep the pipeline runnable when API keys are unavailable.
+    This is not semantically strong like sentence-transformer embeddings. Its
+    purpose is to keep the pipeline runnable when model dependencies are absent.
     """
 
     dimension: int = 1536
@@ -59,27 +60,31 @@ class DeterministicHashEmbeddings:
         return self._embed_one(text)
 
 
-def get_embedder(prefer_openai: bool = True) -> tuple[EmbeddingsProtocol, str]:
+def get_embedder(prefer_hf: bool = True) -> tuple[EmbeddingsProtocol, str]:
     """Return an embeddings implementation and a human-readable model label."""
 
-    if prefer_openai and settings.openai_api_key:
+    if prefer_hf:
         try:
-            from langchain_openai import OpenAIEmbeddings  # type: ignore
+            from langchain_huggingface import HuggingFaceEmbeddings  # type: ignore
 
             logger.info(
-                "Using OpenAI embeddings",
-                extra={"context": {"model": settings.openai_embedding_model}},
+                "Using HuggingFace embeddings",
+                extra={"context": {"model": settings.hf_embedding_model}},
             )
             return (
-                OpenAIEmbeddings(
-                    model=settings.openai_embedding_model,
-                    api_key=settings.openai_api_key,
-                ),
-                settings.openai_embedding_model,
+                HuggingFaceEmbeddings(model_name=settings.hf_embedding_model),
+                settings.hf_embedding_model,
             )
         except ModuleNotFoundError:
             logger.warning(
-                "langchain-openai not installed; falling back to deterministic local embeddings"
+                "langchain-huggingface missing; falling back to deterministic local embeddings"
+            )
+        except Exception as exc:
+            # Model downloads can fail in restricted environments. We prefer a
+            # deterministic fallback so local development remains unblocked.
+            logger.warning(
+                "Could not initialize HuggingFace embeddings; using deterministic fallback",
+                extra={"context": {"error": str(exc), "model": settings.hf_embedding_model}},
             )
 
     logger.warning(

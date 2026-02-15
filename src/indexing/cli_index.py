@@ -41,7 +41,7 @@ def run_indexing(
     else:
         raise ValueError("strategy must be one of: baseline, structure_aware")
 
-    embedder, model_name = get_embedder(prefer_openai=True)
+    embedder, model_name = get_embedder(prefer_hf=True)
 
     # Determine embedding dimension once from a tiny probe vector.
     probe_vector = embedder.embed_query("dimension probe")

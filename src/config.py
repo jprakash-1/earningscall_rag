@@ -43,8 +43,14 @@ class Settings(BaseSettings):
     debug: bool = Field(default=False, alias="DEBUG")
     small_mode_limit: int = Field(default=100, alias="SMALL_MODE_LIMIT")
 
-    openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
-    openai_embedding_model: str = Field(default="text-embedding-3-small", alias="OPENAI_EMBEDDING_MODEL")
+    groq_api_key: str | None = Field(default=None, alias="GROQ_API_KEY")
+    groq_model: str = Field(default="llama-3.3-70b-versatile", alias="GROQ_MODEL")
+    groq_temperature: float = Field(default=0.0, alias="GROQ_TEMPERATURE")
+
+    hf_embedding_model: str = Field(
+        default="sentence-transformers/all-MiniLM-L6-v2",
+        alias="HF_EMBEDDING_MODEL",
+    )
     fallback_embedding_dim: int = Field(default=1536, alias="FALLBACK_EMBEDDING_DIM")
 
     pinecone_api_key: str | None = Field(default=None, alias="PINECONE_API_KEY")
@@ -67,7 +73,7 @@ def validate_env(required_vars: Iterable[str]) -> None:
     Parameters
     ----------
     required_vars:
-        Iterable of variable names (for example, `OPENAI_API_KEY`) that must be
+        Iterable of variable names (for example, `GROQ_API_KEY`) that must be
         present and non-empty before a workflow can proceed.
 
     Raises
