@@ -17,6 +17,7 @@ dependencies = [
   "langgraph>=0.2.34",
   "langsmith>=0.1.128",
   "pinecone>=5.0.1",
+  "streamlit>=1.38.0",
 ]
 
 [project.optional-dependencies]

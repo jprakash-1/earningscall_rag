@@ -65,3 +65,12 @@ This file tracks exact commands run during implementation.
 - `apply_patch src/graph/graph.py` (trace setup in CLI)
 - `python -m src.graph.graph --query "Summarize guidance changes for Tesla Q2" --debug 1`
 - `pytest -q`
+
+## Step 7
+- `cat > src/app/streamlit_app.py`
+- `apply_patch src/graph/state.py` (namespace + user filters)
+- `apply_patch src/graph/nodes.py` (merge UI filters + namespace)
+- `apply_patch src/graph/graph.py` (CLI/user filter support)
+- `streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502` (required escalated run to bind local port)
+- `pkill -f "streamlit run src/app/streamlit_app.py --server.headless true --server.port 8502"`
+- `pytest -q`

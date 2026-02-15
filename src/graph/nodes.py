@@ -138,6 +138,10 @@ def router_node(state: GraphState) -> GraphState:
     else:
         route, reason = heuristic_route(query)
 
+    user_filters = state.get("user_filters")
+    if isinstance(user_filters, dict):
+        filters = {**filters, **user_filters}
+
     logger.info(
         "Router decision",
         extra={"context": {"route": route, "reason": reason, "filters": filters}},
@@ -176,9 +180,10 @@ def retrieve_node(state: GraphState) -> GraphState:
 
     query = state.get("query", "")
     filters = state.get("filters") if isinstance(state.get("filters"), dict) else None
+    namespace = str(state.get("namespace", "earnings-call-rag"))
 
     try:
-        retriever = PineconeRetriever(namespace="earnings-call-rag", top_k=6, use_mmr=False)
+        retriever = PineconeRetriever(namespace=namespace, top_k=6, use_mmr=False)
         chunks = retriever.retrieve(query, filters=filters)
         serialized = [
             {
@@ -201,6 +206,7 @@ def synthesize_node(state: GraphState) -> GraphState:
     """Synthesize final grounded answer from retrieved evidence."""
 
     query = state.get("query", "")
+    namespace = str(state.get("namespace", "earnings-call-rag"))
     try:
         retrieved_chunks = state.get("retrieved_chunks")
         if isinstance(retrieved_chunks, list):
@@ -208,7 +214,7 @@ def synthesize_node(state: GraphState) -> GraphState:
         else:
             result = answer_query(
                 query,
-                namespace="earnings-call-rag",
+                namespace=namespace,
                 top_k=6,
                 use_mmr=False,
                 filters=state.get("filters") if isinstance(state.get("filters"), dict) else None,

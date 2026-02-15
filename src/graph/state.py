@@ -12,6 +12,8 @@ class GraphState(TypedDict, total=False):
     route: str
     route_reason: str
     filters: dict[str, Any]
+    user_filters: dict[str, Any]
+    namespace: str
     clarifying_questions: list[str]
     retrieved_chunks: list[dict[str, Any]]
     answer: str

@@ -89,3 +89,16 @@ Then confirm in LangSmith:
    - `router_node` / `router_llm_decision`
    - `retriever_query`
    - `synthesize_from_chunks`
+
+## Step 7 verification
+
+Run:
+
+```bash
+streamlit run src/app/streamlit_app.py
+```
+
+Then in the app:
+1. Ask a question in chat.
+2. Verify source citations appear under `Sources`.
+3. Toggle `DEBUG mode` and verify router decision, retrieval snippets, and latency appear.
